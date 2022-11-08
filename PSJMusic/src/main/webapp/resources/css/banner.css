@@ -1,0 +1,39 @@
+@charset "UTF-8";
+ #frame {
+ 	width: 1100px;
+ 	height: 300px;
+ 	margin:10px auto;
+ }
+ .part {
+ 	width:300px;
+ 	height: 230px;
+ 	margin-right:10px;
+ 	float:left;
+ }
+.btn22 {
+	width:100px;
+	height:40px;
+	background-color: white;
+  border:1px solid rgb(216, 148, 148);
+  border-radius: 20px;
+} 
+.btn22:hover {
+	color:rgb(216, 148, 148);
+}
+.btn2 {
+	margin:70px 0px 0px 10px;
+}
+#upload {
+	text-align: right;
+	margin:100px 200px 40px auto;
+}
+#uplo {
+    width:13%;
+    height: 35px;
+    background-color: rgb(248, 248, 248);
+    border: 1px solid gainsboro;
+} 
+#uplo:hover {
+		opacity:0.8;
+    color: rgb(216, 148, 148);
+} 

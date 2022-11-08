@@ -1,0 +1,19 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap');
+div{
+  font-family: 'Nanum Myeongjo', serif;
+}	
+a { /* a 태그 style 설정 */
+	font-family: 'Nanum Myeongjo', serif;
+  text-align: center;
+  text-decoration: none; /* 링크의 밑줄 제거 */
+  color: black; /* 링크의 색상 제거 */
+}
+a:hover{
+	text-decoration: none;
+	color: #f5d9da;
+}
+.hh{
+	color: black; 
+	font-size: 16px;
+}

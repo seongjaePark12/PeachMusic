@@ -1,0 +1,33 @@
+@charset "UTF-8";
+	#top2 {
+		background-color: rgb(252, 252, 252);
+    border-bottom: 1px solid rgb(231, 231, 231);
+    height:100px;
+    padding:8px;
+    width:100%;
+	}
+	#top2 > a {
+		text-decoration: none;
+	}
+	a:hover{
+		text-decoration: none;
+		color:rgb(216, 148, 148); 
+	}
+	#logo {
+		margin:0px 10px;
+	}	
+	.menu {
+    margin-left: 60px;
+    list-style: none;
+    font-size: 20px;
+    color: black;
+	}
+	.menu:hover {
+	  color: rgb(216, 148, 148);
+	}
+	#section {
+    width: 60%;
+    z-index: 1;
+    margin: 40px auto;
+    height: 1200px; 
+	}

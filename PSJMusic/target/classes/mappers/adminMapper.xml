@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.PSJ.PSJMusic.dao.AdminDAO">
+<!-- 회원관리 -->
+	<select id="getMemberListMid" resultType="com.PSJ.PSJMusic.user.UserVO">
+		SELECT * FROM SJ_USER WHERE SJ_USER_MID LIKE CONCAT('%',#{mid},'%') ORDER BY SJ_USER_IDX DESC; 
+	</select>
+	<select id="getMemberList" resultType="com.PSJ.PSJMusic.user.UserVO">
+		SELECT * FROM SJ_USER ORDER BY SJ_USER_IDX DESC; 
+	</select>
+	<delete id="setMemberDelete">
+		DELETE FROM SJ_USER WHERE SJ_USER_IDX = #{idx};
+	</delete>
+	
+<!-- 공지관리 -->
+	<select id="noticeTotRecCnt" resultType="int">
+		SELECT count(*) from SJ_NOTICE;
+	</select>
+	<select id="getNoticeAdmin" resultType="com.PSJ.PSJMusic.publicService.NoticeVO">
+		SELECT *,cast(timestampdiff(minute, SJ_NOTICE_DATENOW, now())/60 as signed integer) as diffTime from SJ_NOTICE order by SJ_NOTICE_IDX desc limit #{startIndexNo},#{pageSize};
+	</select>
+	<select id="getNoticeContent" resultType="com.PSJ.PSJMusic.publicService.NoticeVO">
+		SELECT * from SJ_NOTICE where SJ_NOTICE_IDX = #{SJ_NOTICE_IDX};
+	</select>
+	<select id="getPreNext" resultType="com.PSJ.PSJMusic.publicService.NoticeVO">
+		SELECT SJ_NOTICE_IDX,SJ_NOTICE_TITLE from SJ_NOTICE where SJ_NOTICE_IDX in (
+			(select SJ_NOTICE_IDX from SJ_NOTICE where <![CDATA[SJ_NOTICE_IDX < #{SJ_NOTICE_IDX}]]> order by SJ_NOTICE_IDX desc limit 1),
+			(select SJ_NOTICE_IDX from SJ_NOTICE where <![CDATA[SJ_NOTICE_IDX > #{SJ_NOTICE_IDX}]]> order by SJ_NOTICE_IDX limit 1));
+	</select>
+	<insert id="setNoticeInput">
+		insert into SJ_NOTICE values(default,#{vo.SJ_NOTICE_NAME},#{vo.SJ_NOTICE_TITLE},#{vo.SJ_NOTICE_CONTENT},default,#{vo.SJ_NOTICE_HOSTIP},#{vo.SJ_USER_MID},#{vo.SJ_NOTICE_NOTICE});
+	</insert>
+	<update id="setNoticeUpdate">
+		update SJ_NOTICE set SJ_NOTICE_TITLE=#{vo.SJ_NOTICE_TITLE},SJ_NOTICE_CONTENT=#{vo.SJ_NOTICE_CONTENT},SJ_NOTICE_DATENOW=now(),SJ_NOTICE_HOSTIP=#{vo.SJ_NOTICE_HOSTIP},SJ_NOTICE_NOTICE=#{vo.SJ_NOTICE_NOTICE} where SJ_NOTICE_IDX=#{vo.SJ_NOTICE_IDX};
+	</update>
+	<update id="setNoticeLevel">
+		update SJ_NOTICE set SJ_NOTICE_NOTICE = #{SJ_NOTICE_NOTICE} where SJ_NOTICE_IDX = #{idx};
+	</update>
+	<delete id="setNoticeServiceDelete">
+		delete from SJ_NOTICE where SJ_NOTICE_IDX = #{idx}
+	</delete>
+	<delete id="setNoticeDelete">
+		delete from SJ_NOTICE where SJ_NOTICE_IDX = #{idx};
+	</delete>
+	
+<!-- 배너관리 -->
+	<select id="getBannerList" resultType="com.PSJ.PSJMusic.publicService.BannerVO">
+		SELECT * from SJ_BANNER ORDER BY SJ_BANNER_IDX DESC;
+	</select>
+	<insert id="setBannerInput">
+		insert into SJ_BANNER values(default,#{vo.SJ_BANNER_FILE},#{vo.SJ_BANNER_RFILE},default);
+	</insert>
+	<update id="setBannerChange">
+		update SJ_BANNER set SJ_BANNER_FLAG = 'NO' where SJ_BANNER_FLAG = 'OK';
+		update SJ_BANNER set SJ_BANNER_FLAG = #{flag} where SJ_BANNER_IDX = #{idx};
+	</update>
+	<delete id="setBannerDel">
+		delete from SJ_BANNER where SJ_BANNER_IDX = #{idx};
+	</delete>
+	
+<!-- 음악관리 -->
+	<select id="songTotRecCnt" resultType="int">
+		SELECT count(*) from SJ_SONG;
+	</select>
+	<select id="getSongListsong" resultType="com.PSJ.PSJMusic.music.SongVO">
+		SELECT * FROM SJ_SONG WHERE SJ_SONG_TITLE LIKE CONCAT('%',#{song},'%') ORDER BY SJ_SONG_IDX DESC limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<select id="getSongList" resultType="com.PSJ.PSJMusic.music.SongVO">
+		SELECT * FROM SJ_SONG ORDER BY SJ_SONG_IDX DESC  limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<insert id="songInput">
+		insert into SJ_SONG values(default,#{vo.SJ_SONG_IMG},#{vo.SJ_SONG_TITLE},#{vo.SJ_SONG_ARTIST},#{vo.SJ_SONG_ALBUM},#{vo.SJ_SONG_DATE},#{vo.SJ_SONG_GENRE},#{vo.SJ_SONG_TIME},#{vo.SJ_SONG_WRITE},#{vo.SJ_SONG_COMPOSING},#{vo.SJ_SONG_ARRANGE},#{vo.SJ_SONG_LYRICS},#{vo.SJ_SONG_FILE},#{vo.SJ_SONG_RFLE},default,default,default);
+	</insert>
+	
+	<!-- 비디오관리 -->
+	<select id="videoTotRecCnt" resultType="int">
+		SELECT count(*) from SJ_VIDEO;
+	</select>
+	<select id="getVideoList" resultType="com.PSJ.PSJMusic.publicService.VideoVO">
+		SELECT * FROM SJ_VIDEO ORDER BY SJ_VIDEO_IDX DESC limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<insert id="videoInput">
+		insert into SJ_VIDEO values(default,#{vo.SJ_VIDEO_IMG},#{vo.SJ_VIDEO_LINK},#{vo.SJ_VIDEO_TITLE},#{vo.SJ_VIDEO_ARTIST},#{vo.SJ_VIDEO_ALBUM},default);
+	</insert>	
+	<delete id="setvideoDelete">
+		delete from SJ_VIDEO where SJ_VIDEO_IDX = #{idx};
+	</delete>	
+	<select id="getVideoContent" resultType="com.PSJ.PSJMusic.publicService.VideoVO">
+		SELECT * from SJ_VIDEO where SJ_VIDEO_IDX = #{idx};
+	</select>	
+	<update id="setVideoUpdate">
+		update SJ_VIDEO set SJ_VIDEO_IMG=#{vo.SJ_VIDEO_IMG},SJ_VIDEO_LINK=#{vo.SJ_VIDEO_LINK},SJ_VIDEO_TITLE=#{vo.SJ_VIDEO_TITLE},SJ_VIDEO_ARTIST=#{vo.SJ_VIDEO_ARTIST},SJ_VIDEO_ALBUM=#{vo.SJ_VIDEO_ALBUM} where SJ_VIDEO_IDX=#{vo.SJ_VIDEO_IDX};
+	</update>
+	
+	<!-- 매거진관리 -->
+	<select id="MagazinTotRecCnt" resultType="int">
+		SELECT count(*) from SJ_MAGAZINE;
+	</select>
+	<select id="getMagazinList" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT * FROM SJ_MAGAZINE ORDER BY SJ_MAGAZINE_IDX DESC limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<insert id="magazineInput">
+		insert into SJ_MAGAZINE values(default,#{vo.SJ_MAGAZINE_IMG},#{vo.SJ_MAGAZINE_TITLE},#{vo.SJ_MAGAZINE_CONTENT},default);
+	</insert>	
+	<delete id="setmagazineDelete">
+		delete from SJ_MAGAZINE where SJ_MAGAZINE_IDX = #{idx};
+	</delete>	
+	<select id="getMagazineContent" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT * from SJ_MAGAZINE where SJ_MAGAZINE_IDX = #{idx};
+	</select>	
+	<update id="setMagazinUpdate">
+		update SJ_MAGAZINE set SJ_MAGAZINE_IMG=#{vo.SJ_MAGAZINE_IMG},SJ_MAGAZINE_TITLE=#{vo.SJ_MAGAZINE_TITLE},SJ_MAGAZINE_CONTENT=#{vo.SJ_MAGAZINE_CONTENT} where SJ_MAGAZINE_IDX=#{vo.SJ_MAGAZINE_IDX};
+	</update>
+	
+	<!-- 질문관리 -->
+	<select id="questionTotRecCnt" resultType="int">
+		SELECT count(*) from SJ_QUESTION;
+	</select>
+	<select id="getQuestionListwhat" resultType="com.PSJ.PSJMusic.publicService.QuestionVO">
+		SELECT * FROM SJ_QUESTION WHERE SJ_QUESTION_WHAT LIKE CONCAT('%',#{what},'%') ORDER BY SJ_QUESTION_IDX DESC limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<select id="getQuestionList" resultType="com.PSJ.PSJMusic.publicService.QuestionVO">
+		SELECT * FROM SJ_QUESTION ORDER BY SJ_QUESTION_IDX DESC  limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<delete id="setquestionDelete">
+		delete from SJ_QUESTION where SJ_QUESTION_IDX = #{idx};
+	</delete>	
+	<update id="setquestionLevel">
+		update SJ_QUESTION set SJ_QUESTION_ANSER = #{SJ_QUESTION_ANSER} where SJ_QUESTION_IDX = #{idx};
+	</update>	
+	<insert id="setReplyInsert">
+		insert into SJ_QUESTION_REPLY values (default,#{rVo.SJ_QUESTION_IDX},#{rVo.SJ_USER_MID},default,#{rVo.SJ_QUESTIONRE_CONTENT});
+	</insert>
+	<delete id="setReplyDelete">
+		delete from SJ_QUESTION_REPLY where SJ_QUESTIONRE_IDX = #{replyIdx};
+	</delete>
+	<delete id="setqaServiceDelete">
+		delete from SJ_QUESTION where SJ_QUESTION_IDX = #{idx};
+	</delete>
+	<update id="setReplyInsert2">
+		update SJ_QUESTION_REPLY set SJ_QUESTIONRE_CONTENT=#{rVo.SJ_QUESTIONRE_CONTENT} where SJ_QUESTIONRE_IDX = #{rVo.SJ_QUESTIONRE_IDX};
+	</update>	
+	
+	<!-- 통계관리 -->
+	<select id="getmusicChart" resultType="com.PSJ.PSJMusic.music.PlayVO">
+		SELECT sum(SJ_PLAY_CNT)as SJ_PLAY_CNT FROM SJ_PLAY;
+	</select>
+	<select id="getvideoChart" resultType="com.PSJ.PSJMusic.publicService.VideoVO">
+		SELECT sum(SJ_VIDEO_VISIT)as SJ_VIDEO_VISIT FROM SJ_VIDEO;
+	</select>
+	<select id="getvideoTopChart" resultType="com.PSJ.PSJMusic.publicService.VideoVO">
+		SELECT * FROM SJ_VIDEO order by SJ_VIDEO_VISIT desc limit 10;
+	</select>
+	<select id="getvisitChart" resultType="com.PSJ.PSJMusic.publicService.AllChartVO">
+		SELECT sum(SJ_ALLCHART_VISIT) as SJ_ALLCHART_VISIT FROM SJ_ALLCHART;
+	</select>
+	<select id="getjoinChart" resultType="com.PSJ.PSJMusic.publicService.AllChartVO">
+		SELECT sum(SJ_ALLCHART_JOIN) as SJ_ALLCHART_JOIN FROM SJ_ALLCHART;
+	</select>
+	<select id="getmagazineChart" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT sum(SJ_MAGAZINE_VISIT) as SJ_MAGAZINE_VISIT FROM SJ_MAGAZINE;
+	</select>
+	<select id="getmagazineTopChart" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT * FROM SJ_MAGAZINE order by SJ_MAGAZINE_VISIT desc limit 10;
+	</select>
+</mapper>

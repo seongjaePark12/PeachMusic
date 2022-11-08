@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.PSJ.PSJMusic.dao.UserDAO">
+	<select id="getIdCheck" resultType="com.PSJ.PSJMusic.user.UserVO">
+		SELECT * FROM SJ_USER WHERE SJ_USER_MID = #{SJ_USER_MID}; 
+	</select>
+	
+	<select id="getEmailCheck" resultType="com.PSJ.PSJMusic.user.UserVO">
+		SELECT * FROM SJ_USER WHERE SJ_USER_EMAIL = #{SJ_USER_EMAIL}; 
+	</select>
+	
+	<select id="getMidConfirm" resultType="com.PSJ.PSJMusic.user.UserVO">
+		SELECT * FROM SJ_USER WHERE SJ_USER_NUMBER = #{num} AND SJ_USER_EMAIL = #{email};
+	</select>
+	
+	<select id="getPwdConfirm" resultType="com.PSJ.PSJMusic.user.UserVO">
+		SELECT * FROM SJ_USER WHERE SJ_USER_MID = #{mid} AND SJ_USER_NUMBER = #{num} AND SJ_USER_EMAIL = #{email};
+	</select>
+	
+	<update id="setPwdChange">
+		UPDATE SJ_USER SET SJ_USER_PWD = #{pwd} WHERE SJ_USER_MID = #{mid};
+	</update>
+	
+	<update id="setMemDelete">
+		UPDATE SJ_USER SET SJ_USER_DEL = 'OK' WHERE SJ_USER_MID = #{mid};
+	</update>
+	
+	<update id="getloginUp">
+		UPDATE SJ_ALLCHART SET SJ_ALLCHART_VISIT = SJ_ALLCHART_VISIT + 1 WHERE SJ_ALLCHART_IDX = 1;
+	</update>
+	
+	<update id="getjoinUp">
+		UPDATE SJ_ALLCHART SET SJ_ALLCHART_JOIN = SJ_ALLCHART_JOIN + 1 WHERE SJ_ALLCHART_IDX = 1;
+	</update>
+	
+	<update id="setMyUpdate">
+		UPDATE SJ_USER SET 
+		SJ_USER_PWD=#{vo.SJ_USER_PWD},
+    SJ_USER_NICKNAME=#{vo.SJ_USER_NICKNAME},
+    SJ_USER_NUMBER=#{vo.SJ_USER_NUMBER},
+    SJ_USER_EMAIL=#{vo.SJ_USER_EMAIL}
+    WHERE SJ_USER_MID=#{vo.SJ_USER_MID};
+	</update>
+	
+	<insert id="setMemJoin">
+    INSERT INTO SJ_USER VALUES
+    (DEFAULT,
+    #{vo.SJ_USER_MID},
+    #{vo.SJ_USER_PWD},
+    #{vo.SJ_USER_NICKNAME},
+    #{vo.SJ_USER_NUMBER},
+    #{vo.SJ_USER_EMAIL},
+    DEFAULT);
+	</insert>
+	
+	 <insert id="setKakaoMemberInputOk">
+    INSERT INTO SJ_USER values
+    (DEFAULT,
+    #{mid},
+    #{pwd},
+    #{nickName},
+    '010-0000-0000',
+    #{email},
+    DEFAULT);
+  </insert>
+  
+  <select id="noticeTotRecCnt" resultType="int">
+		SELECT count(*) from SJ_NOTICE;
+	</select>
+		<select id="getNotice" resultType="com.PSJ.PSJMusic.publicService.NoticeVO">
+		SELECT *,cast(timestampdiff(minute, SJ_NOTICE_DATENOW, now())/60 as signed integer) as diffTime from SJ_NOTICE order by SJ_NOTICE_IDX desc limit #{startIndexNo},#{pageSize};
+	</select>
+	<select id="getNoticeContent" resultType="com.PSJ.PSJMusic.publicService.NoticeVO">
+		SELECT * from SJ_NOTICE where SJ_NOTICE_IDX = #{SJ_NOTICE_IDX};
+	</select>
+	<select id="getPreNext" resultType="com.PSJ.PSJMusic.publicService.NoticeVO">
+		SELECT SJ_NOTICE_IDX,SJ_NOTICE_TITLE from SJ_NOTICE where SJ_NOTICE_IDX in (
+			(select SJ_NOTICE_IDX from SJ_NOTICE where <![CDATA[SJ_NOTICE_IDX < #{SJ_NOTICE_IDX}]]> order by SJ_NOTICE_IDX desc limit 1),
+			(select SJ_NOTICE_IDX from SJ_NOTICE where <![CDATA[SJ_NOTICE_IDX > #{SJ_NOTICE_IDX}]]> order by SJ_NOTICE_IDX limit 1));
+	</select>	
+	
+	<insert id="setArtistTape">
+		insert into SJ_ARITISTTAPE values (default, #{userIdx}, #{artist}, default);
+	</insert>
+	
+	<select id="getArtistTape" resultType="String">
+		select SJ_ARITISTTAPE_ARTIST from SJ_ARITISTTAPE where SJ_USER_IDX = #{SJ_USER_IDX} order by SJ_SJ_ARITISTTAPE_DATE desc limit 1;
+	</select>
+	
+	<select id="getUserVOS" resultType="com.PSJ.PSJMusic.user.UserVO">
+		select *, count(SJ_VISIT_VISITDATE) as visitCnt, max(SJ_VISIT_VISITDATE) as lastDate from SJ_USER u left join SJ_VISIT v on SJ_USER_IDX = u.SJ_USER_IDX group by u.SJ_USER_IDX order by u.SJ_USER_IDX desc;
+	</select>	
+	<select id="getUserBestSongIdx" resultType="com.PSJ.PSJMusic.user.UserVO">
+		select * from SJ_PLAY where SJ_USER_IDX = #{userIdx} order by SJ_PLAY_CNT desc;
+	</select>	
+	
+	<select id="getPlayListVOS" resultType="com.PSJ.PSJMusic.music.PlayListVO">
+		select SJ_PLAYLIST_IDX as idx,SJ_PLAYLIST_LISTNM as listNm, SJ_PLAYLIST_CONTENT,SJ_PLAYLIST_COMMENT,SJ_USER_IDX,SJ_PLAYLIST_VISIBLE from SJ_PLAYLIST where SJ_USER_IDX = #{SJ_USER_IDX} and SJ_PLAYLIST_VISIBLE = 1;
+	</select>	
+	<select id="getPlayListVO" resultType="com.PSJ.PSJMusic.music.PlayListVO">
+		select SJ_PLAYLIST_IDX as idx,SJ_PLAYLIST_LISTNM as listNm, SJ_PLAYLIST_CONTENT,SJ_PLAYLIST_COMMENT,SJ_USER_IDX,SJ_PLAYLIST_VISIBLE from SJ_PLAYLIST where SJ_PLAYLIST_IDX = #{idx} and SJ_PLAYLIST_VISIBLE = 1;
+	</select>	
+	<insert id="setPlayList">
+		insert into SJ_PLAYLIST values (default, #{vo.SJ_USER_IDX}, #{vo.SJ_PLAYLIST_LISTNM}, #{vo.SJ_PLAYLIST_COMMENT}, #{vo.SJ_PLAYLIST_CONTENT}, default);
+	</insert>	
+	<update id="setUpdateMyList">
+		update SJ_PLAYLIST set SJ_PLAYLIST_CONTENT = #{content} where SJ_PLAYLIST_IDX = #{idx} and SJ_PLAYLIST_VISIBLE = 1;
+	</update>
+	<update id="setPlayListDel">
+		update SJ_PLAYLIST set SJ_PLAYLIST_VISIBLE = 0 where SJ_PLAYLIST_IDX = #{idx};
+	</update>
+	<update id="setPlayListContentUpdate">
+		update SJ_PLAYLIST set SJ_PLAYLIST_LISTNM = #{listNm}, SJ_PLAYLIST_COMMENT = #{comment} where SJ_PLAYLIST_IDX = #{idx};
+	</update>	
+	
+</mapper>

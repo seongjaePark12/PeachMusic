@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.PSJ.PSJMusic.dao.HomeDAO">
+	<select id="getBannerList" resultType="com.PSJ.PSJMusic.publicService.BannerVO">
+		SELECT * from SJ_BANNER where SJ_BANNER_FLAG = 'OK';
+	</select>
+	<select id="getNoticeList" resultType="com.PSJ.PSJMusic.publicService.NoticeVO">
+		SELECT * from SJ_NOTICE order by SJ_NOTICE_IDX desc limit 5;
+	</select>
+	<select id="getMagazineList" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT * from SJ_MAGAZINE order by SJ_MAGAZINE_IDX limit 10;
+	</select>
+	<select id="getMagazineList2" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT * from SJ_MAGAZINE order by SJ_MAGAZINE_IDX;
+	</select>
+	<select id="getTvList" resultType="com.PSJ.PSJMusic.publicService.VideoVO">
+		SELECT * from SJ_VIDEO order by SJ_VIDEO_IDX limit 10;
+	</select>		
+	<select id="getMagazine" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT * from SJ_MAGAZINE order by SJ_MAGAZINE_IDX limit 1;
+	</select>
+	<select id="getMagazineContent" resultType="com.PSJ.PSJMusic.publicService.MagazinVO">
+		SELECT * from SJ_MAGAZINE where SJ_MAGAZINE_IDX = #{idx};
+	</select>
+	<select id="getVideoList" resultType="com.PSJ.PSJMusic.publicService.VideoVO">
+		SELECT * from SJ_VIDEO order by SJ_VIDEO_IDX;
+	</select>
+	<select id="getVideoContent" resultType="com.PSJ.PSJMusic.publicService.VideoVO">
+		SELECT * from SJ_VIDEO where SJ_VIDEO_IDX = #{idx};
+	</select>
+	<update id="getVideoUp">
+		update SJ_VIDEO set SJ_VIDEO_VISIT = SJ_VIDEO_VISIT+1 where SJ_VIDEO_IDX = #{idx};
+	</update>	
+	
+	<select id="getMagazineReply" resultType="com.PSJ.PSJMusic.publicService.MagazinReplyVO">
+		select * from SJ_MAGAZINE_REPLY where SJ_MAGAZINE_IDX = #{idx};
+	</select>
+		<insert id="setReplyInsert">
+		insert into SJ_MAGAZINE_REPLY values (default,#{rVo.SJ_MAGAZINE_IDX},#{rVo.SJ_USER_NICKNAME},default,#{rVo.SJ_MAGAZINERE_CONTENT});
+	</insert>
+	<delete id="setReplyDelete">
+		delete from SJ_MAGAZINE_REPLY where SJ_MAGAZINERE_IDX = #{replyIdx};
+	</delete>
+	<update id="setReplyInsert2">
+		update SJ_MAGAZINE_REPLY set SJ_MAGAZINERE_CONTENT=#{rVo.SJ_MAGAZINERE_CONTENT} where SJ_MAGAZINERE_IDX = #{rVo.SJ_MAGAZINERE_IDX};
+	</update>
+	<update id="getMagazineUp">
+		update SJ_MAGAZINE set SJ_MAGAZINE_VISIT= SJ_MAGAZINE_VISIT + 1 where SJ_MAGAZINE_IDX = #{idx};
+	</update>	
+	
+	<select id="qaTotRecCnt" resultType="int">
+		SELECT count(*) from SJ_QUESTION;
+	</select>
+	<select id="getQuestionListwhat" resultType="com.PSJ.PSJMusic.publicService.QuestionVO">
+		SELECT * FROM SJ_QUESTION WHERE SJ_QUESTION_WHAT LIKE CONCAT('%',#{what},'%') ORDER BY SJ_QUESTION_IDX DESC limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<select id="getQuestionList" resultType="com.PSJ.PSJMusic.publicService.QuestionVO">
+		SELECT * FROM SJ_QUESTION ORDER BY SJ_QUESTION_IDX DESC  limit #{startIndexNo},#{pageSize}; 
+	</select>
+	<insert id="setqaInput">
+		insert into SJ_QUESTION values (default,#{vo.SJ_USER_MID},#{vo.SJ_QUESTION_TITLE},#{vo.SJ_QUESTION_WHAT},#{vo.SJ_QUESTION_CONTENT},default,default);
+	</insert>
+	<select id="getqaContent" resultType="com.PSJ.PSJMusic.publicService.QuestionVO">
+		SELECT * FROM SJ_QUESTION where SJ_QUESTION_IDX = #{idx}; 
+	</select>
+	<select id="getqaReply" resultType="com.PSJ.PSJMusic.publicService.QuestionReplyVO">
+		select * from SJ_QUESTION_REPLY where SJ_QUESTION_IDX = #{idx};
+	</select>
+	<update id="qaUpdate">
+		update SJ_QUESTION set SJ_QUESTION_TITLE=#{vo.SJ_QUESTION_TITLE},SJ_QUESTION_WHAT=#{vo.SJ_QUESTION_WHAT} ,SJ_QUESTION_CONTENT=#{vo.SJ_QUESTION_CONTENT} where SJ_QUESTION_IDX = #{vo.SJ_QUESTION_IDX};
+	</update>
+</mapper>

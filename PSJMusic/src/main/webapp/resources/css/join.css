@@ -1,0 +1,151 @@
+@charset "UTF-8";
+body{
+  margin: 0px;
+  padding: 0px;
+}
+.row{
+  background-color: white;
+}
+.row{
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 12px 12px 22px gray;
+}
+#SJ_USER_MID {
+  width: 100%;
+  height: 43px;
+  margin-top: 11px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+#SJ_USER_PWD {
+  width: 100%;
+  height: 43px;
+  margin-top: 10px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+#pwdTest {
+  width: 100%;
+  height: 43px;
+  margin-top: 10px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+#name {
+  width: 100%;
+  height: 43px;
+  margin-top: 10px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+#SJ_USER_NICKNAME {
+  width: 100%;
+  height: 43px;
+  margin-top: 11px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+#getCode1 {
+  width: 130px;
+  height: 43px;
+  margin-top: 10px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+#getCode2 {
+  width: 130px;
+  height: 43px;
+  margin-top: 10px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+#getCode3 {
+  width: 130px;
+  height: 43px;
+  margin-top: 10px;
+  border: 1px solid #DADADA;
+  outline: none;
+}
+
+.bubu {
+  width: 94px;
+  height: 43px;
+  background: linear-gradient(25deg, #da8e93, #e9b3b6, #f5d9da);
+  border-radius: 4px;
+  font-weight: bold;
+  border: 0;
+  color: white;
+}
+.bubu:hover{
+  background-position: right;
+}
+
+#joinbtn {
+  width: 435px;
+  height: 43px;
+  background: linear-gradient(25deg, #da8e93, #e9b3b6, #f5d9da);
+  border-radius: 4px;
+  font-weight: bold;
+  border: 0;
+  color: white;
+  font-size: 20px;
+}
+#joinbtn:hover{
+  background-position: right;
+}
+input[type=button] {
+  width: 90px;
+  height: 43px;
+  border: 0;
+  font-size: 13px;
+  background: linear-gradient(25deg, #da8e93, #e9b3b6, #f5d9da);
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+}
+input[type=submit] {
+  width: 90px;
+  height: 43px;
+  border: 0;
+  font-size: 13px;
+  background: linear-gradient(25deg, #da8e93, #e9b3b6, #f5d9da);
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+}
+#jojo{
+  color: transparent;
+  background: linear-gradient(25deg, #da8e93, #e9b3b6, #f5d9da);
+	-webkit-background-clip: text;
+}
+
+label{
+  position: relative;
+  right: 205px;
+  font-weight: bold;
+}
+label[for="SJ_USER_MID"]{
+  position : relative;
+  right : 190px;
+}
+label[for="SJ_USER_PWD"]{
+  position : relative;
+  right : 185px;
+}
+label[for="pwdTest"]{
+  position : relative;
+  right : 170px;
+}
+label[for="SJ_USER_NICKNAME"]{
+  position : relative;
+  right : 175px;
+}
+label[for="SJ_USER_EMAIL"]{
+  position : relative;
+  right : 190px;
+}
+label[for="SJ_USER_NUMBER"]{
+  position : relative;
+  right : 175px;
+}

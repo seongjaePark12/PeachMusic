@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.PSJ.PSJMusic.dao.MusicDAO">
+	<select id="getChartVOS" resultType="com.PSJ.PSJMusic.music.ChartVO">
+		<if test="date == null">
+			select * from SJ_CHART where SJ_CHART_DATE = (select max(SJ_CHART_DATE) from SJ_CHART) order by SJ_CHART_RANK;
+		</if>
+		<if test="date == main">
+			select * from SJ_CHART where SJ_CHART_DATE = (select max(SJ_CHART_DATE) from SJ_CHART) order by SJ_CHART_RANK limit 10;
+		</if>
+		<if test="date != null and date != 'all'">
+			select * from SJ_CHART where date(SJ_CHART_DATE) = #{date} order by SJ_CHART_DATE desc, SJ_CHART_RANK limit 100;
+		</if>
+		<if test="date != null and date == 'all'">
+			select * from SJ_CHART group by SJ_CHART_TITLE, SJ_CHART_ARTIST;
+		</if>
+	</select>
+	<select id="getMinDate" resultType="String">
+		select date_format(min(SJ_CHART_DATE), "%Y-%m-%d") from SJ_CHART;
+	</select>
+	<select id="getSongCnt" resultType="int">
+		select count(*) from SJ_SONG;
+	</select>	
+	<select id="getSongVOS" resultType="com.PSJ.PSJMusic.music.SongVO">
+		select * from SJ_SONG order by SJ_SONG_IDX desc limit #{startNo}, #{pageSize};
+	</select>	
+	<update id="setAdminSongUpdate">
+		update SJ_SONG set ${column} = #{value} where SJ_SONG_IDX = #{idx};
+	</update>
+	<select id="getSongInfor" resultType="com.PSJ.PSJMusic.music.SongVO">
+		select * from SJ_SONG where SJ_SONG_IDX = #{idx};
+	</select>
+	<select id="getSongInfor2" resultType="com.PSJ.PSJMusic.music.SongVO">
+		select SJ_SONG_IDX as idx,SJ_SONG_IMG as img,SJ_SONG_TITLE as title,SJ_SONG_ARTIST as artist from SJ_SONG where SJ_SONG_IDX = #{idx};
+	</select>
+	<insert id="addSongDB">
+		insert into SJ_SONG (SJ_SONG_IMG, SJ_SONG_TITLE, SJ_SONG_ARTIST) values (#{img}, #{title}, #{artist});
+	</insert>
+	<select id="getSongIdx" resultType="Integer">
+		select SJ_SONG_IDX from SJ_SONG where SJ_SONG_TITLE = #{title} and SJ_SONG_ARTIST = #{artist};
+	</select>	
+	<update id="setChartSongIdx">
+		update SJ_CHART set SJ_SONG_IDX = #{songIdx} where SJ_CHART_TITLE = #{title} and SJ_CHART_ARTIST = #{artist};
+	</update>	
+	<update id="setIsfile">
+		update SJ_SONG set SJ_SONG_ISFILE = 1 where SJ_SONG_IDX = #{idx};
+	</update>	
+	<update id="setIsFileChart">
+		update SJ_CHART set SJ_CHART_ISFILE = 1 where SJ_CHART_TITLE = #{SJ_SONG_TITLE} and SJ_CHART_ARTIST = #{SJ_SONG_ARTIST};
+	</update>	
+	<insert id="setSongUpdate">
+		insert into SJ_SONGUPDATE values (default, #{idx}, default);
+	</insert>	
+	<select id="isSong" resultType="int">
+		select count(*) from SJ_SONG where SJ_SONG_TITLE = #{SJ_SONG_TITLE} and SJ_SONG_ARTIST = #{SJ_SONG_ARTIST};
+	</select>	
+	<insert id="insertSong">
+		insert into SJ_SONG values (default, #{vo.SJ_SONG_IMG}, #{vo.SJ_SONG_TITLE}, #{vo.SJ_SONG_ARTIST}, #{vo.SJ_SONG_ALBUM}, #{vo.SJ_SONG_DATE}, #{vo.SJ_SONG_GENRE}, #{vo.SJ_SONG_COMPOSING}, #{vo.SJ_SONG_WRITE}, #{vo.SJ_SONG_ARRANGE}, #{vo.SJ_SONG_LYRICS}, default, default, default);
+	</insert>	
+	<select id="getLastIdx" resultType="int">
+		select SJ_SONG_IDX from SJ_SONG order by SJ_SONG_IDX desc limit 1;
+	</select>	
+	<update id="isFileUpdate">
+		<if test="sw == 0">
+			update SJ_SONG set SJ_SONG_ISFILE = 0 where SJ_SONG_IDX = #{SJ_SONG_IDX};
+		</if>
+		<if test="sw == 1">
+			update SJ_SONG set SJ_SONG_ISFILE = 1 where SJ_SONG_IDX = #{SJ_SONG_IDX};
+		</if>
+	</update>
+	<select id="getSongSrch" resultType="com.PSJ.PSJMusic.music.SongVO">
+		<if test="srchKwd != null">
+			select * from SJ_SONG where SJ_SONG_TITLE like '%${srchKwd}%' or SJ_SONG_ARTIST like '%${srchKwd}%';
+		</if>
+		<if test="srchKwd == null">
+			select * from SJ_SONG where SJ_SONG_ISFILE = 0 and SJ_SONG_IDX != 0;
+		</if>
+	</select>	
+	<select id="getSongSrchplay" resultType="com.PSJ.PSJMusic.music.SongVO">
+		<if test="srchKwd != null">
+			select SJ_SONG_IDX as idx,SJ_SONG_IMG as img,SJ_SONG_TITLE as title,SJ_SONG_ARTIST as artist  from SJ_SONG where SJ_SONG_TITLE like '%${srchKwd}%' or SJ_SONG_ARTIST like '%${srchKwd}%';
+		</if>
+		<if test="srchKwd == null">
+			select SJ_SONG_IDX as idx,SJ_SONG_IMG as img,SJ_SONG_TITLE as title,SJ_SONG_ARTIST as artist from SJ_SONG where SJ_SONG_ISFILE = 0 and SJ_SONG_IDX != 0;
+		</if>
+	</select>	
+	<insert id="setChartUpdate">
+		insert into SJ_CHART values
+		<foreach collection="vos" item="vo" separator=",">(default, #{vo.SJ_CHART_IMG}, #{vo.SJ_CHART_TITLE}, #{vo.SJ_CHART_ARTIST}, #{vo.SJ_CHART_RANK}, #{vo.SJ_SONG_IDX}, #{vo.SJ_CHART_ISFILE}, default)</foreach>
+		;
+	</insert>	
+	
+	<select id="getLikeList" resultType="String">
+		select SJ_SONG_LIKELIST from SJ_SONG where SJ_SONG_IDX = #{idx};
+	</select>
+	<update id="setLikeList">
+		update SJ_SONG set SJ_SONG_LIKELIST = #{likeList} where SJ_SONG_IDX = #{idx};
+	</update>
+	<update id="upLikeCnt">
+		update SJ_SONG set SJ_SONG_WISHCNT = SJ_SONG_WISHCNT + 1 where SJ_SONG_IDX = #{idx};
+	</update>
+	<update id="downLikeCnt">
+		update SJ_SONG set SJ_SONG_WISHCNT = SJ_SONG_WISHCNT - 1 where SJ_SONG_IDX = #{idx};
+	</update>		
+	<select id="getLyrics" resultType="String">
+		select SJ_SONG_LYRICS from SJ_SONG where SJ_SONG_IDX = #{idx};
+	</select>	
+	
+	<select id="isPlayCnt" resultType="int">
+		select count(*) from SJ_PLAY where SJ_SONG_IDX = #{songIdx} and SJ_USER_IDX = #{userIdx};
+	</select>
+	<insert id="setPlayCnt">
+		insert into SJ_PLAY values (default,#{songIdx}, #{userIdx},default);
+	</insert>
+	<update id="addPlayCnt">
+		update SJ_PLAY set SJ_PLAY_CNT = SJ_PLAY_CNT + 1 where SJ_SONG_IDX = #{songIdx} and SJ_USER_IDX = #{userIdx};
+	</update>	
+	<select id="getMyRank" resultType="com.PSJ.PSJMusic.music.SongVO">
+		select * from SJ_SONG s left join SJ_PLAY p on s.SJ_SONG_IDX = p.SJ_SONG_IDX where SJ_USER_IDX = #{SJ_USER_IDX} and SJ_PLAY_CNT > 0 order by SJ_PLAY_CNT desc limit 20;
+	</select>
+	<select id="getRank" resultType="com.PSJ.PSJMusic.music.SongVO">
+		select *, sum(SJ_PLAY_CNT) as playCntSum from SJ_SONG s left join SJ_PLAY p on s.SJ_SONG_IDX = p.SJ_SONG_IDX group by s.SJ_SONG_IDX order by sum(SJ_PLAY_CNT) desc limit 10;
+	</select>
+	<select id="getThumnail" resultType="String">
+		select SJ_SONG_IMG from SJ_SONG where SJ_SONG_ARTIST = #{artist} order by SJ_SONG_IDX desc limit 1;
+	</select>
+		<select id="getSrchArtist" resultType="com.PSJ.PSJMusic.music.SongVO">
+		<if test="artist2 == null">
+			select * from SJ_SONG where SJ_SONG_ARTIST like concat('%', #{artist1}, '%') order by SJ_SONG_IDX desc;
+		</if>
+		<if test="artist2 != null">
+			select * from SJ_SONG where SJ_SONG_ARTIST like concat('%', #{artist1}, '%') or SJ_SONG_ARTIST like concat('%', #{artist2}, '%') order by SJ_SONG_IDX desc;
+		</if>
+	</select>
+	<select id="getNewSong" resultType="com.PSJ.PSJMusic.music.SongVO">
+		select * from SJ_SONG order by SJ_SONG_IDX desc limit 20;
+	</select>
+	<select id="getGenreSong" resultType="com.PSJ.PSJMusic.music.SongVO">
+		<if test="genre == null">
+		select * from SJ_SONG order by SJ_SONG_IDX desc;
+		</if>
+		<if test="genre != null">
+		select * from SJ_SONG where SJ_SONG_GENRE = #{genre} order by SJ_SONG_DATE desc;
+		</if>
+	</select>
+	
+</mapper>
