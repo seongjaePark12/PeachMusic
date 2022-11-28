@@ -1,7 +1,7 @@
 # PeachMusic
 PeachMusic<br/>
 음악스트리밍사이트<br/>
-2022 08 ~ 2022 10 <br/>
+2022 08 ~ 2022 11 <br/>
 구현영상<br/>
 - <a href="https://youtu.be/iB53gFsLHpI">유튜브 링크</a><br/>
 ![logo](https://user-images.githubusercontent.com/92313032/195526322-c2708cc3-167e-4d8d-b707-390902b47ab0.png)<br/>
